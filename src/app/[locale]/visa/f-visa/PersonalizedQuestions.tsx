@@ -107,7 +107,7 @@ export default function PersonalizedQuestions({
     setLoadingSuggestions(true);
     try {
       const token = localStorage.getItem('auth_token');
-      const response = await fetch('/api/ai/suggestions?topic=f-visa', {
+      const response = await fetch('/api/ai/suggestions?topic=f-visa&question=' + question, {
         method: 'GET',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -139,7 +139,7 @@ export default function PersonalizedQuestions({
   };
 
   const handleSuggestionClick = (suggestion: string) => {
-    setQuestion(suggestion);
+    setAnswer(suggestion);
   };
 
   return (
@@ -148,7 +148,7 @@ export default function PersonalizedQuestions({
         <h2 className="text-2xl font-bold">My Personal Questions</h2>
         {!showForm && (
           <Button 
-            onClick={() => setShowForm(true)} 
+            onClick={() => {setShowForm(true);setSuggestedQuestions([])}} 
             className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg transition-colors duration-200"
           >
             <Plus size={16} /> Add Question
@@ -209,7 +209,7 @@ export default function PersonalizedQuestions({
                       ) : (
                         <Sparkles size={16} />
                       )}
-                      Get AI Suggestions (DeepSeek)
+                      Get AI Suggestions
                     </Button>
                     
                     {!usageLimitLoading && (
@@ -236,7 +236,7 @@ export default function PersonalizedQuestions({
 
               {suggestedQuestions.length > 0 && !editingId && (
                 <div className="mt-4 p-3 bg-gray-50 rounded-md">
-                  <p className="text-sm font-medium mb-2">Suggested Questions:</p>
+                  <p className="text-sm font-medium mb-2">Suggested Answers:</p>
                   <ul className="space-y-2">
                     {suggestedQuestions.map((suggestion, index) => (
                       <li key={index}>

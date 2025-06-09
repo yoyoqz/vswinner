@@ -114,7 +114,6 @@ export default function AdminFilesPage() {
 
       await fetchFiles();
       resetForm();
-      alert(editingFile ? '文件更新成功！' : '文件创建成功！');
     } catch (error) {
       console.error('Error saving file:', error);
       alert('保存文件失败，请重试。');
@@ -197,85 +196,6 @@ export default function AdminFilesPage() {
     });
   };
 
-  const addSampleFiles = async () => {
-    const sampleFiles = [
-      {
-        name: 'F1签证申请表',
-        originalName: 'F1-Visa-Application-Form.pdf',
-        description: 'F1学生签证申请表格模板，包含填写说明和示例',
-        filePath: 'https://example.com/f1-form.pdf',
-        fileSize: '2048000',
-        mimeType: 'application/pdf',
-        category: '表格',
-        published: true,
-        order: 1,
-      },
-      {
-        name: 'B1/B2签证指南',
-        originalName: 'B1-B2-Visa-Guide.pdf',
-        description: '详细的B1/B2签证申请指南，包含准备材料清单和面试技巧',
-        filePath: 'https://example.com/b1b2-guide.pdf',
-        fileSize: '3072000',
-        mimeType: 'application/pdf',
-        category: '指南',
-        published: true,
-        order: 2,
-      },
-      {
-        name: '面试问题清单',
-        originalName: 'Interview-Questions-Checklist.docx',
-        description: '常见签证面试问题清单及回答建议',
-        filePath: 'https://example.com/interview-questions.docx',
-        fileSize: '1024000',
-        mimeType: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-        category: '模板',
-        published: true,
-        order: 3,
-      },
-      {
-        name: '材料准备清单',
-        originalName: 'Document-Preparation-Checklist.xlsx',
-        description: '签证申请所需材料的详细清单，可打印使用',
-        filePath: 'https://example.com/document-checklist.xlsx',
-        fileSize: '512000',
-        mimeType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-        category: '模板',
-        published: true,
-        order: 4,
-      },
-    ];
-
-    try {
-      const token = localStorage.getItem('auth_token');
-      let successCount = 0;
-
-      for (const file of sampleFiles) {
-        try {
-          const response = await fetch('/api/admin/files', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              'Authorization': `Bearer ${token}`,
-            },
-            body: JSON.stringify(file),
-          });
-
-          if (response.ok) {
-            successCount++;
-          }
-        } catch (error) {
-          console.error('Error creating file:', error);
-        }
-      }
-
-      await fetchFiles();
-      alert(`成功添加 ${successCount} 个示例文件！`);
-    } catch (error) {
-      console.error('Error adding sample files:', error);
-      alert('添加示例文件失败，请重试。');
-    }
-  };
-
   const formatFileSize = (bytes: string) => {
     const size = parseInt(bytes);
     if (size === 0) return '0 Bytes';
@@ -312,13 +232,6 @@ export default function AdminFilesPage() {
             <p className="text-gray-600 mt-2">管理可下载的文件资源</p>
           </div>
           <div className="flex space-x-2">
-            <button
-              onClick={addSampleFiles}
-              className="flex items-center space-x-2 bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700"
-            >
-              <Plus className="h-4 w-4" />
-              <span>添加示例文件</span>
-            </button>
             <button
               onClick={() => setShowForm(true)}
               className="flex items-center space-x-2 bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700"

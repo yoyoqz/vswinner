@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card';
+import { Card, CardHeader, CardTitle, CardContent, CardFooter } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { toast } from 'sonner';
 import { useAIUsageLimit } from '@/hooks/useAIUsageLimit';
@@ -31,6 +31,7 @@ export default function BVisaPersonalizedQuestions({
   const [editingQuestionId, setEditingQuestionId] = useState<string | null>(null);
   const [newQuestion, setNewQuestion] = useState('');
   const [newAnswer, setNewAnswer] = useState('');
+  const [suggestedQuestions, setSuggestedQuestions] = useState<string[]>([]);
   const [isGettingSuggestion, setIsGettingSuggestion] = useState(false);
   const { used, limit, canUse, membershipType, loading: usageLimitLoading, updateUsage } = useAIUsageLimit();
 
@@ -110,6 +111,11 @@ export default function BVisaPersonalizedQuestions({
     setEditingQuestionId(null);
     setNewQuestion('');
     setNewAnswer('');
+    setSuggestedQuestions([])
+  };
+
+  const handleSuggestionClick = (suggestion: string) => {
+    setNewAnswer(suggestion);
   };
 
   const getAISuggestion = async () => {
@@ -126,7 +132,7 @@ export default function BVisaPersonalizedQuestions({
     setIsGettingSuggestion(true);
     try {
       const token = localStorage.getItem('auth_token');
-      const response = await fetch('/api/ai/suggestions?topic=b-visa', {
+      const response = await fetch('/api/ai/suggestions?topic=b-visa&question=' + newQuestion, {
         method: 'GET',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -144,9 +150,7 @@ export default function BVisaPersonalizedQuestions({
       const data = await response.json();
       
       // Use the first suggestion as the answer
-      if (data.suggestions && data.suggestions.length > 0) {
-        setNewAnswer(data.suggestions[0]);
-      }
+      setSuggestedQuestions(data.suggestions);
       
       // Update usage count
       if (data.usage) {
@@ -244,7 +248,27 @@ export default function BVisaPersonalizedQuestions({
                   </div>
                 )}
               </div>
-              <div className="flex gap-2 flex-wrap">
+            </div>
+            {suggestedQuestions.length > 0 && (
+                <div className="mt-4 p-3 bg-gray-50 rounded-md">
+                  <p className="text-sm font-medium mb-2">Suggested Answers:</p>
+                  <ul className="space-y-2">
+                    {suggestedQuestions.map((suggestion, index) => (
+                      <li key={index}>
+                        <Button
+                          type="button"
+                          className="text-left w-full justify-start text-sm py-1 h-auto text-blue-600 hover:bg-blue-50 transition-colors duration-200"
+                          onClick={() => handleSuggestionClick(suggestion)}
+                        >
+                          {suggestion}
+                        </Button>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}            
+          </CardContent>
+          <CardFooter className="flex justify-end gap-2">
                 <Button
                   onClick={editingQuestionId ? () => handleEditQuestion(editingQuestionId) : handleAddQuestion}
                   className="bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-4 rounded-lg transition-colors duration-200"
@@ -257,9 +281,7 @@ export default function BVisaPersonalizedQuestions({
                 >
                   Cancel
                 </Button>
-              </div>
-            </div>
-          </CardContent>
+            </CardFooter>          
         </Card>
       )}
 

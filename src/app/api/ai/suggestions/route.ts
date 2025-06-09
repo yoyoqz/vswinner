@@ -33,6 +33,7 @@ export async function GET(request: Request) {
 
     const { searchParams } = new URL(request.url);
     const topic = searchParams.get('topic');
+    const question = searchParams.get('question');
     
     if (!topic) {
       return NextResponse.json(
@@ -43,9 +44,9 @@ export async function GET(request: Request) {
 
     // Define prompts based on topic
     const prompts: Record<string, string> = {
-      'f-visa': 'Generate 5 common questions about F-1 student visas that international students might have.',
-      'b-visa': 'Generate 5 common questions about B-1/B-2 business and tourist visas that applicants might have.',
-      'default': 'Generate 5 common questions about US visa application process that applicants might have.'
+      'f-visa': 'F-1 student visas question:',
+      'b-visa': 'B-1/B-2 business and tourist visas question:',
+      'default': 'US visa question:'
     };
 
     const prompt = prompts[topic] || prompts.default;
@@ -67,11 +68,11 @@ export async function GET(request: Request) {
           messages: [
             {
               role: "system",
-              content: "You are a helpful assistant that generates relevant questions about US visas. Provide only the questions without any additional text or numbering. Format each question on a new line."
+              content: "You are a helpful assistant that generates two answers about US visas questions that can help me to get a visa. Provide only the answers without any additional text or numbering. "
             },
             {
               role: "user",
-              content: prompt
+              content: prompt + question
             }
           ],
           temperature: 0.7,
