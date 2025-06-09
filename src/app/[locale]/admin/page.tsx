@@ -55,13 +55,18 @@ export default function AdminDashboardPage() {
 
         <Card>
           <CardHeader>
-            <CardTitle>Pending Questions</CardTitle>
+            <CardTitle>Questions Management</CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="mb-4 text-gray-600">Review and approve user-submitted questions</p>
-            <Link href="/admin/questions/pending">
-              <Button className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg transition-colors duration-200 w-full">Review Questions</Button>
-            </Link>
+            <p className="mb-4 text-gray-600">Manage all questions</p>
+            <div className="space-y-2">
+              <Link href="/admin/questions">
+                <Button className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg transition-colors duration-200 w-full">Manage Questions</Button>
+              </Link>
+              <Link href="/admin/questions/pending">
+                <Button className="border-2 border-blue-600 text-blue-600 hover:bg-blue-50 font-semibold py-2 px-4 rounded-lg transition-colors duration-200 w-full">Review Pending</Button>
+              </Link>
+            </div>
           </CardContent>
         </Card>
 
@@ -130,7 +135,7 @@ export default function AdminDashboardPage() {
             <CardTitle>User Memberships</CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="mb-4 text-gray-600">Grant, cancel, and manage user memberships</p>
+            <p className="mb-4 text-gray-600">Manage user memberships</p>
             <Link href="/admin/user-memberships">
               <Button className="bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-4 rounded-lg transition-colors duration-200 w-full">Manage User Memberships</Button>
             </Link>

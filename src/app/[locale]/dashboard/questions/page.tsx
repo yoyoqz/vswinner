@@ -24,8 +24,11 @@ type Question = {
 
 export default function UserQuestionsPage() {
   const [questions, setQuestions] = useState<Question[]>([]);
+  const [filteredQuestions, setFilteredQuestions] = useState<Question[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [filter, setFilter] = useState('all');
+  const [searchTerm, setSearchTerm] = useState('');
   const { isAuthenticated } = useAuth();
   const router = useRouter();
 
@@ -47,6 +50,7 @@ export default function UserQuestionsPage() {
 
         const data = await response.json();
         setQuestions(data);
+        setFilteredQuestions(data);
       } catch (err) {
         console.error('Error fetching questions:', err);
         setError('Failed to load questions');
@@ -57,6 +61,26 @@ export default function UserQuestionsPage() {
 
     fetchQuestions();
   }, [isAuthenticated, router]);
+
+  // Filter and search effect
+  useEffect(() => {
+    let filtered = questions;
+
+    // Apply status filter
+    if (filter !== 'all') {
+      filtered = filtered.filter(q => q.status.toLowerCase() === filter.toLowerCase());
+    }
+
+    // Apply search filter
+    if (searchTerm.trim()) {
+      filtered = filtered.filter(q => 
+        q.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        q.content.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+    }
+
+    setFilteredQuestions(filtered);
+  }, [questions, filter, searchTerm]);
 
   if (!isAuthenticated) {
     return null; // Will redirect in useEffect
@@ -106,9 +130,94 @@ export default function UserQuestionsPage() {
         </div>
       )}
 
-      {questions.length > 0 ? (
+      {/* Statistics */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+        <Card>
+          <CardContent className="p-4 text-center">
+            <h3 className="text-2xl font-bold text-blue-600">{questions.length}</h3>
+            <p className="text-sm text-gray-600">Total Questions</p>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardContent className="p-4 text-center">
+            <h3 className="text-2xl font-bold text-green-600">
+              {questions.filter(q => q.status === 'APPROVED').length}
+            </h3>
+            <p className="text-sm text-gray-600">Approved</p>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardContent className="p-4 text-center">
+            <h3 className="text-2xl font-bold text-yellow-600">
+              {questions.filter(q => q.status === 'PENDING').length}
+            </h3>
+            <p className="text-sm text-gray-600">Pending</p>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardContent className="p-4 text-center">
+            <h3 className="text-2xl font-bold text-red-600">
+              {questions.filter(q => q.status === 'REJECTED').length}
+            </h3>
+            <p className="text-sm text-gray-600">Rejected</p>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Filters & Search */}
+      <Card className="mb-6">
+        <CardHeader>
+          <CardTitle>Filters & Search</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="flex flex-col sm:flex-row gap-4">
+            <div className="flex-1">
+              <input
+                type="text"
+                placeholder="Search questions by title or content..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              />
+            </div>
+            <div className="flex gap-2">
+              <Button
+                onClick={() => setFilter('all')}
+                className={`${filter === 'all' ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-700'} px-4 py-2 rounded-lg transition-colors`}
+              >
+                All ({questions.length})
+              </Button>
+              <Button
+                onClick={() => setFilter('approved')}
+                className={`${filter === 'approved' ? 'bg-green-600 text-white' : 'bg-gray-200 text-gray-700'} px-4 py-2 rounded-lg transition-colors`}
+              >
+                Approved ({questions.filter(q => q.status === 'APPROVED').length})
+              </Button>
+              <Button
+                onClick={() => setFilter('pending')}
+                className={`${filter === 'pending' ? 'bg-yellow-600 text-white' : 'bg-gray-200 text-gray-700'} px-4 py-2 rounded-lg transition-colors`}
+              >
+                Pending ({questions.filter(q => q.status === 'PENDING').length})
+              </Button>
+              <Button
+                onClick={() => setFilter('rejected')}
+                className={`${filter === 'rejected' ? 'bg-red-600 text-white' : 'bg-gray-200 text-gray-700'} px-4 py-2 rounded-lg transition-colors`}
+              >
+                Rejected ({questions.filter(q => q.status === 'REJECTED').length})
+              </Button>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Questions List */}
+      {filteredQuestions.length > 0 ? (
         <div className="space-y-6">
-          {questions.map((question) => (
+          <h2 className="text-xl font-semibold mb-4">
+            Questions ({filteredQuestions.length})
+            {searchTerm && <span className="text-gray-500 font-normal"> - Search results for "{searchTerm}"</span>}
+          </h2>
+          {filteredQuestions.map((question) => (
             <Card key={question.id}>
               <CardHeader>
                 <div className="flex justify-between items-start">
@@ -145,13 +254,43 @@ export default function UserQuestionsPage() {
         </div>
       ) : (
         <div className="text-center py-12 bg-gray-50 rounded-lg">
-          <h3 className="text-xl font-medium text-gray-500">No questions found</h3>
-          <p className="mt-2 text-gray-400 mb-6">You haven't asked any questions yet</p>
-          <Link href="/questions/new">
-            <Button className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg transition-colors duration-200">
-              Ask a Question
-            </Button>
-          </Link>
+          {questions.length === 0 ? (
+            <>
+              <h3 className="text-xl font-medium text-gray-500">No questions found</h3>
+              <p className="mt-2 text-gray-400 mb-6">You haven't asked any questions yet</p>
+              <Link href="/questions/new">
+                <Button className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg transition-colors duration-200">
+                  Ask a Question
+                </Button>
+              </Link>
+            </>
+          ) : (
+            <>
+              <h3 className="text-xl font-medium text-gray-500">No questions match your filters</h3>
+              <p className="mt-2 text-gray-400 mb-6">
+                {searchTerm 
+                  ? `No questions found for "${searchTerm}"`
+                  : `No ${filter} questions found`
+                }
+              </p>
+              <div className="space-x-4">
+                <Button
+                  onClick={() => {
+                    setFilter('all');
+                    setSearchTerm('');
+                  }}
+                  className="border-2 border-blue-600 text-blue-600 hover:bg-blue-50 font-semibold py-2 px-4 rounded-lg transition-colors duration-200"
+                >
+                  Clear Filters
+                </Button>
+                <Link href="/questions/new">
+                  <Button className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg transition-colors duration-200">
+                    Ask a Question
+                  </Button>
+                </Link>
+              </div>
+            </>
+          )}
         </div>
       )}
     </div>

@@ -99,7 +99,7 @@ export default function DashboardPage() {
         </div>
       )}
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
         {/* Profile Card */}
         <Card>
           <CardHeader>
@@ -170,18 +170,23 @@ export default function DashboardPage() {
             ) : (
               <p className="text-gray-500">You haven't asked any questions yet.</p>
             )}
-            <div className="mt-4">
-              <Link href="/questions/new">
-                <Button className="border-2 border-blue-600 text-blue-600 hover:bg-blue-50 font-semibold py-1 px-3 rounded-lg transition-colors duration-200 text-sm">
-                  Ask a Question
-                </Button>
-              </Link>
-              {questions.length > 5 && (
-                <Link href="/dashboard/questions" className="ml-2">
-                  <Button className="text-blue-600 hover:text-blue-700 underline font-semibold py-1 px-3 transition-colors duration-200 text-sm">
-                    View All
+            <div className="mt-4 space-y-2">
+              <div className="flex space-x-2">
+                <Link href="/questions/new">
+                  <Button className="border-2 border-blue-600 text-blue-600 hover:bg-blue-50 font-semibold py-1 px-3 rounded-lg transition-colors duration-200 text-sm">
+                    Ask a Question
                   </Button>
                 </Link>
+                <Link href="/dashboard/questions">
+                  <Button className="text-blue-600 hover:text-blue-700 underline font-semibold py-1 px-3 transition-colors duration-200 text-sm">
+                    Manage Questions
+                  </Button>
+                </Link>
+              </div>
+              {questions.length > 0 && (
+                <p className="text-xs text-gray-500">
+                  Total: {questions.length} question{questions.length !== 1 ? 's' : ''}
+                </p>
               )}
             </div>
           </CardContent>
@@ -223,6 +228,30 @@ export default function DashboardPage() {
                 </Link>
               </div>
             )}
+          </CardContent>
+        </Card>
+
+        {/* Personal Questions Card */}
+        <Card>
+          <CardHeader>
+            <CardTitle>Personal F-Visa Questions</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-gray-500 text-sm mb-4">
+              Manage your personalized F-visa questions and AI-generated answers
+            </p>
+            <div className="space-y-2">
+              <Link href="/dashboard/personal-questions">
+                <Button className="border-2 border-blue-600 text-blue-600 hover:bg-blue-50 font-semibold py-1 px-3 rounded-lg transition-colors duration-200 text-sm w-full">
+                  Manage Personal Questions
+                </Button>
+              </Link>
+              <Link href="/visa/f-visa">
+                <Button className="text-blue-600 hover:text-blue-700 underline font-semibold py-1 px-3 transition-colors duration-200 text-sm w-full">
+                  F-Visa Information
+                </Button>
+              </Link>
+            </div>
           </CardContent>
         </Card>
       </div>

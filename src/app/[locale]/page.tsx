@@ -186,7 +186,7 @@ export default async function Home({ params }: Props) {
           <div className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-2xl p-12 border border-white/20">
             <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
               <div className="group">
-                <div className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent mb-2 group-hover:scale-110 transition-transform duration-200">10K+</div>
+                <div className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent mb-2 group-hover:scale-110 transition-transform duration-200">100+</div>
                 <div className="text-gray-600 font-medium">Successful Applications</div>
               </div>
               <div className="group">
@@ -198,7 +198,7 @@ export default async function Home({ params }: Props) {
                 <div className="text-gray-600 font-medium">Countries Served</div>
               </div>
               <div className="group">
-                <div className="text-4xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent mb-2 group-hover:scale-110 transition-transform duration-200">24/7</div>
+                <div className="text-4xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent mb-2 group-hover:scale-110 transition-transform duration-200">10 hours a day</div>
                 <div className="text-gray-600 font-medium">Expert Support</div>
               </div>
             </div>
