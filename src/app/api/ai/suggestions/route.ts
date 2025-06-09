@@ -1,12 +1,10 @@
 import { NextResponse } from 'next/server';
-import OpenAI from 'openai';
 import { getCurrentUser } from '@/lib/auth';
 import { checkAIUsageLimit, incrementAIUsage } from '@/lib/aiSuggestions';
 
-// Initialize OpenAI client
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
+// Initialize Grok-3 API client (xAI)
+const GROK_API_BASE_URL = 'https://api.x.ai/v1';
+const GROK_API_KEY = process.env.XAI_API_KEY || process.env.GROK_API_KEY;
 
 export async function GET(request: Request) {
   try {
@@ -52,25 +50,42 @@ export async function GET(request: Request) {
 
     const prompt = prompts[topic] || prompts.default;
 
-    // Use OpenAI for suggestions
+    // Use Grok-3 for suggestions
     try {
-      const response = await openai.chat.completions.create({
-        model: "gpt-3.5-turbo",
-        messages: [
-          {
-            role: "system",
-            content: "You are a helpful assistant that generates relevant questions about US visas. Provide only the questions without any additional text or numbering."
-          },
-          {
-            role: "user",
-            content: prompt
-          }
-        ],
-        temperature: 0.7,
-        max_tokens: 200,
+      if (!GROK_API_KEY) {
+        throw new Error('Grok API key not configured');
+      }
+
+      const response = await fetch(`${GROK_API_BASE_URL}/chat/completions`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${GROK_API_KEY}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          model: "grok-beta",
+          messages: [
+            {
+              role: "system",
+              content: "You are a helpful assistant that generates relevant questions about US visas. Provide only the questions without any additional text or numbering. Format each question on a new line."
+            },
+            {
+              role: "user",
+              content: prompt
+            }
+          ],
+          temperature: 0.7,
+          max_tokens: 300,
+        }),
       });
 
-      const content = response.choices[0].message.content || '';
+      if (!response.ok) {
+        throw new Error(`Grok API error: ${response.status} ${response.statusText}`);
+      }
+
+      const data = await response.json();
+      const content = data.choices?.[0]?.message?.content || '';
+      
       // Parse the response into individual questions
       const suggestions = content
         .split('\n')
@@ -90,9 +105,9 @@ export async function GET(request: Request) {
         }
       });
     } catch (error) {
-      console.error('OpenAI API error:', error);
+      console.error('Grok API error:', error);
       
-      // Fallback to predefined suggestions if OpenAI API fails
+      // Fallback to predefined suggestions if Grok API fails
       const fallbackSuggestions = [
         "What documents do I need for an F-1 visa interview?",
         "How can I prove non-immigrant intent for my F-1 visa?",

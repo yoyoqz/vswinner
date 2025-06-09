@@ -97,6 +97,7 @@ export default function PersonalizedQuestions({
     setAnswer('');
   };
 
+  // Generate AI suggestions using Grok-3
   const generateAISuggestions = async () => {
     if (!canUse) {
       toast.error('已达到AI建议使用限制');
@@ -208,7 +209,7 @@ export default function PersonalizedQuestions({
                       ) : (
                         <Sparkles size={16} />
                       )}
-                      Get AI Suggestions
+                      Get AI Suggestions (Grok-3)
                     </Button>
                     
                     {!usageLimitLoading && (
