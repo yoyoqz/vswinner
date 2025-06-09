@@ -2,9 +2,9 @@ import { NextResponse } from 'next/server';
 import { getCurrentUser } from '@/lib/auth';
 import { checkAIUsageLimit, incrementAIUsage } from '@/lib/aiSuggestions';
 
-// Initialize Grok-3 API client (xAI)
-const GROK_API_BASE_URL = 'https://api.x.ai/v1';
-const GROK_API_KEY = process.env.XAI_API_KEY || process.env.GROK_API_KEY;
+// Initialize DeepSeek API client
+const DEEPSEEK_API_BASE_URL = 'https://api.deepseek.com/v1';
+const DEEPSEEK_API_KEY = process.env.DEEPSEEK_API_KEY;
 
 export async function GET(request: Request) {
   try {
@@ -50,20 +50,20 @@ export async function GET(request: Request) {
 
     const prompt = prompts[topic] || prompts.default;
 
-    // Use Grok-3 for suggestions
+    // Use DeepSeek for suggestions
     try {
-      if (!GROK_API_KEY) {
-        throw new Error('Grok API key not configured');
+      if (!DEEPSEEK_API_KEY) {
+        throw new Error('DeepSeek API key not configured');
       }
 
-      const response = await fetch(`${GROK_API_BASE_URL}/chat/completions`, {
+      const response = await fetch(`${DEEPSEEK_API_BASE_URL}/chat/completions`, {
         method: 'POST',
         headers: {
-          'Authorization': `Bearer ${GROK_API_KEY}`,
+          'Authorization': `Bearer ${DEEPSEEK_API_KEY}`,
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          model: "grok-beta",
+          model: "deepseek-chat",
           messages: [
             {
               role: "system",
@@ -80,7 +80,7 @@ export async function GET(request: Request) {
       });
 
       if (!response.ok) {
-        throw new Error(`Grok API error: ${response.status} ${response.statusText}`);
+        throw new Error(`DeepSeek API error: ${response.status} ${response.statusText}`);
       }
 
       const data = await response.json();
@@ -105,9 +105,9 @@ export async function GET(request: Request) {
         }
       });
     } catch (error) {
-      console.error('Grok API error:', error);
+      console.error('DeepSeek API error:', error);
       
-      // Fallback to predefined suggestions if Grok API fails
+      // Fallback to predefined suggestions if DeepSeek API fails
       const fallbackSuggestions = [
         "What documents do I need for an F-1 visa interview?",
         "How can I prove non-immigrant intent for my F-1 visa?",
