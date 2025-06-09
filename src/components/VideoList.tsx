@@ -3,6 +3,8 @@
 import { useState, useEffect } from 'react';
 import { useTranslations } from 'next-intl';
 import { formatTextForReact } from '@/lib/formatText';
+import { VideoComments } from './VideoComments';
+import { VideoPlayer } from './VideoPlayer';
 
 interface Video {
   id: string;
@@ -21,6 +23,7 @@ export function VideoList() {
   const [videos, setVideos] = useState<Video[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [selectedVideo, setSelectedVideo] = useState<Video | null>(null);
   const t = useTranslations('videos');
 
   useEffect(() => {
@@ -49,17 +52,14 @@ export function VideoList() {
     return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
   };
 
-  const getVideoEmbedUrl = (url: string) => {
-    // Convert YouTube URLs to embed format
-    if (url.includes('youtube.com/watch?v=')) {
-      const videoId = url.split('v=')[1].split('&')[0];
-      return `https://www.youtube.com/embed/${videoId}`;
-    }
-    if (url.includes('youtu.be/')) {
-      const videoId = url.split('youtu.be/')[1].split('?')[0];
-      return `https://www.youtube.com/embed/${videoId}`;
-    }
-    return url;
+
+
+  const handleVideoClick = (video: Video) => {
+    setSelectedVideo(video);
+  };
+
+  const handleCloseVideo = () => {
+    setSelectedVideo(null);
   };
 
   if (loading) {
@@ -86,11 +86,73 @@ export function VideoList() {
     );
   }
 
+  // If a video is selected, show the video player and comments
+  if (selectedVideo) {
+    return (
+      <div className="max-w-4xl mx-auto">
+        {/* Back button */}
+        <div className="mb-6">
+          <button
+            onClick={handleCloseVideo}
+            className="inline-flex items-center px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+          >
+            <svg
+              className="w-4 h-4 mr-2"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M15 19l-7-7 7-7"
+              />
+            </svg>
+            返回视频列表
+          </button>
+        </div>
+
+        {/* Video Player */}
+        <div className="bg-white rounded-lg shadow-lg overflow-hidden mb-8">
+          <VideoPlayer url={selectedVideo.url} title={selectedVideo.title} />
+          
+          <div className="p-6">
+            <h1 className="text-2xl font-bold text-gray-900 mb-3">
+              {selectedVideo.title}
+            </h1>
+            
+            {selectedVideo.description && (
+              <div 
+                className="text-gray-700 mb-4 leading-relaxed"
+                dangerouslySetInnerHTML={formatTextForReact(selectedVideo.description)}
+              />
+            )}
+            
+            <div className="flex items-center justify-between text-sm text-gray-500 border-t pt-4">
+              <span>发布时间: {new Date(selectedVideo.createdAt).toLocaleDateString('zh-CN')}</span>
+              {selectedVideo.duration && (
+                <span>时长: {formatDuration(selectedVideo.duration)}</span>
+              )}
+            </div>
+          </div>
+        </div>
+
+        {/* Comments Section */}
+        <VideoComments videoId={selectedVideo.id} />
+      </div>
+    );
+  }
+
+  // Default video grid view
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
       {videos.map((video) => (
         <div key={video.id} className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow">
-          <div className="relative aspect-video">
+          <div 
+            className="relative aspect-video cursor-pointer"
+            onClick={() => handleVideoClick(video)}
+          >
             {video.thumbnail ? (
               <img
                 src={video.thumbnail}
@@ -152,10 +214,8 @@ export function VideoList() {
             )}
             
             <div className="flex justify-between items-center">
-              <a
-                href={video.url}
-                target="_blank"
-                rel="noopener noreferrer"
+              <button
+                onClick={() => handleVideoClick(video)}
                 className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors"
               >
                 <svg
@@ -169,8 +229,8 @@ export function VideoList() {
                     clipRule="evenodd"
                   />
                 </svg>
-                {t('watchVideo')}
-              </a>
+                观看视频
+              </button>
             </div>
           </div>
         </div>

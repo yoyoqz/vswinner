@@ -6,7 +6,6 @@
 
 generator client {
   provider = "prisma-client-js"
-  output   = "../src/generated/prisma"
 }
 
 datasource db {
@@ -127,6 +126,8 @@ model Comment {
   question      Question? @relation(fields: [questionId], references: [id], onDelete: Cascade)
   faqId         String?
   faq           FAQ?      @relation(fields: [faqId], references: [id], onDelete: Cascade)
+  videoId       String?
+  video         Video?    @relation(fields: [videoId], references: [id], onDelete: Cascade)
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
 }
@@ -155,6 +156,7 @@ model Video {
   order         Int       @default(0)
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
+  comments      Comment[]
 }
 
 model Membership {
