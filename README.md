@@ -39,4 +39,4 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/bui
 docker build -t vswinner-app .
 
 # Run the container
-docker run -p 80:3000 vswinner-app
+sudo docker run -p 80:3000 vswinner-app
