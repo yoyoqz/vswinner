@@ -4,8 +4,8 @@ export const defaultMembershipPlans = [
   {
     name: 'Basic Plan',
     description: 'Perfect for individuals who need basic visa guidance and support.',
-    price: 29.99,
-    duration: 180, // 6 months
+    price: 20,
+    duration: 30, // 1 month
     features: [
       'Access to basic visa information',
       'Email support',
@@ -18,8 +18,8 @@ export const defaultMembershipPlans = [
   {
     name: 'Premium Plan',
     description: 'Ideal for professionals and frequent travelers with comprehensive needs.',
-    price: 59.99,
-    duration: 365, // 1 year
+    price: 50,
+    duration: 90, // 3 months
     features: [
       'All Basic Plan features',
       'Priority email support',
@@ -34,8 +34,8 @@ export const defaultMembershipPlans = [
   {
     name: 'Enterprise Plan',
     description: 'Complete visa solution for businesses and immigration professionals.',
-    price: 199.99,
-    duration: 1095, // 3 years
+    price: 80,
+    duration: 180, // 6 months
     features: [
       'All Premium Plan features',
       '24/7 priority support',

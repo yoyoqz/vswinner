@@ -14,29 +14,29 @@ export function getAIUsageLimit(membershipName: string | null): number {
   // 转换为小写进行匹配，更宽松的匹配规则
   const lowerName = membershipName.toLowerCase();
   
-  // 匹配基础/半年会员
-  if (lowerName.includes('basic') || lowerName.includes('半年') || lowerName.includes('基础')) {
-    return 20; // 半年会员20次
+  // 匹配基础/一月会员
+  if (lowerName.includes('basic') || lowerName.includes('一月') || lowerName.includes('基础')) {
+    return 10; // 一月会员10次
   }
   
-  // 匹配高级/一年会员
-  if (lowerName.includes('premium') || lowerName.includes('一年') || lowerName.includes('高级')) {
-    return 80; // 一年会员80次
+  // 匹配高级/三月会员
+  if (lowerName.includes('premium') || lowerName.includes('三月') || lowerName.includes('高级')) {
+    return 40; // 三月会员40次
   }
   
-  // 匹配企业/三年会员
-  if (lowerName.includes('enterprise') || lowerName.includes('三年') || lowerName.includes('企业')) {
-    return 300; // 三年会员300次
+  // 匹配企业/半年会员
+  if (lowerName.includes('enterprise') || lowerName.includes('半年') || lowerName.includes('企业')) {
+    return 100; // 半年会员100次
   }
   
   // 原始精确匹配作为后备
   switch (membershipName) {
     case 'Basic Plan':
-      return 20;
+      return 10;
     case 'Premium Plan':
-      return 80;
+      return 40;
     case 'Enterprise Plan':
-      return 300;
+      return 100;
     default:
       console.warn(`Unknown membership type: ${membershipName}`);
       return 0; // 无法识别的会员类型
@@ -78,12 +78,12 @@ export async function checkAIUsageLimit(userId: string): Promise<AIUsageLimit> {
     // 临时解决方案：如果有活跃会员但limit为0，根据会员持续时间给予默认额度
     if (activeMembership && limit === 0) {
       const duration = activeMembership.membership.duration;
-      if (duration <= 180) { // 6个月以下
-        limit = 20;
-      } else if (duration <= 365) { // 1年以下
-        limit = 80;
-      } else { // 1年以上
-        limit = 300;
+      if (duration <= 30) { // 1个月
+        limit = 10;
+      } else if (duration <= 90) { // 3个月
+        limit = 40;
+      } else { // 6个月及以上
+        limit = 100;
       }
       console.log(`Applied fallback limit based on duration: ${duration} days -> ${limit} uses`);
     }

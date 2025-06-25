@@ -28,9 +28,9 @@
 2. 访问 `/admin/test-membership`
 3. 点击 "Seed Membership Plans" 创建默认会员计划
 4. 确认创建了以下计划：
-   - Basic Plan (180天)
-   - Premium Plan (365天)
-   - Enterprise Plan (1095天)
+   - Basic Plan (30天)
+   - Premium Plan (90天)
+   - Enterprise Plan (180天)
 
 ### 3. 测试非会员访问限制
 

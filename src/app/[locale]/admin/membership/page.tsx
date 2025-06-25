@@ -7,10 +7,10 @@ import { formatTextForReact } from '@/lib/formatText';
 
 const membershipPlans = [
   {
-    name: '半年会员',
-    description: '半年期会员套餐，享受基础服务',
+    name: '一月会员',
+    description: '一月期会员套餐，享受基础服务',
     price: 20.00,
-    duration: 180,
+    duration: 30,
     features: [
       '访问高级签证指南',
       '独家视频内容',
@@ -21,12 +21,12 @@ const membershipPlans = [
     order: 1,
   },
   {
-    name: '一年会员',
-    description: '一年期会员套餐，最受欢迎的选择',
-    price: 30.00,
-    duration: 365,
+    name: '三月会员',
+    description: '三月期会员套餐，最受欢迎的选择',
+    price: 50.00,
+    duration: 90,
     features: [
-      '包含所有半年会员功能',
+      '包含所有一月会员功能',
       '一对一咨询服务（1小时）',
       '申请审核服务',
       '高级文档清单',
@@ -35,12 +35,12 @@ const membershipPlans = [
     order: 2,
   },
   {
-    name: '三年会员',
-    description: '三年期会员套餐，提供全面的签证协助',
-    price: 70.00,
-    duration: 1095,
+    name: '半年会员',
+    description: '半年期会员套餐，提供全面的签证协助',
+    price: 80.00,
+    duration: 180,
     features: [
-      '包含所有一年会员功能',
+      '包含所有三月会员功能',
       '无限制咨询服务',
       '快速申请审核',
       '专属签证顾问',
@@ -132,7 +132,7 @@ export default function AdminMembershipPage() {
       <div className="bg-white rounded-lg shadow-md p-6 mb-6">
         <h2 className="text-xl font-semibold mb-4">初始化会员套餐</h2>
         <p className="text-gray-600 mb-4">
-          点击下面的按钮来创建三个预设的会员套餐：半年会员($20)、一年会员($30)、三年会员($70)
+                      点击下面的按钮来创建三个预设的会员套餐：一月会员($20)、三月会员($50)、半年会员($80)
         </p>
         
         <button
