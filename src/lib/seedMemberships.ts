@@ -22,7 +22,6 @@ export const defaultMembershipPlans = [
     duration: 90, // 3 months
     features: [
       'All Basic Plan features',
-      'Priority email support',
       'Advanced visa processing guides',
       'One-on-one consultation (1 hour)',
       'Document review service',
@@ -38,13 +37,11 @@ export const defaultMembershipPlans = [
     duration: 180, // 6 months
     features: [
       'All Premium Plan features',
-      '24/7 priority support',
+      '8/7 priority support',
       'Unlimited consultations',
       'Custom document templates',
       'Bulk application processing',
       'Dedicated account manager',
-      'API access for integrations',
-      'White-label solutions',
     ],
     active: true,
     order: 3,
